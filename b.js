@@ -74,10 +74,10 @@ async function execute(message, serverQueue) {
   let song;
   if (ytdl.validateURL(args[1])) {
     const { videos } = await yts(args.slice(1).join(" "));
-    console.log("Trying 2");
-
+    console.log("Trying 1");
+    console.log(videos);
     if (!videos.length) {
-      message.channel.send("No songs were found!");
+      message.channel.send("No song or video found! Double check the URL!");
     }
     song = {
       title: videos[0].title,
@@ -91,6 +91,9 @@ async function execute(message, serverQueue) {
 
     if (!videos.length) {
       message.channel.send("No songs were found!");
+    }
+    if (videos[0] == undefined) {
+      message.channel.send("It's a video!");
     }
     song = {
       title: videos[0].title,
