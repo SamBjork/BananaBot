@@ -48,6 +48,9 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}help`)) {
     help(message);
     return;
+  } else if (message.content.startsWith(`${prefix}random`)) {
+    help(message);
+    return;
   } else if (message.content.startsWith(`${prefix}fuckyou`)) {
     fuckyou(message);
     return;
@@ -90,7 +93,7 @@ async function execute(message, serverQueue) {
     console.log("Trying 2");
 
     if (!videos.length) {
-      message.channel.send("No songs were found!");
+      message.channel.send("No song or video found from search!");
     }
     if (videos[0] == undefined) {
       message.channel.send("It's a video!");
@@ -285,6 +288,17 @@ function leave(message, serverQueue) {
   serverQueue.voiceChannel.leave();
   queue.delete(message.guild.id);
   return;
+}
+
+function random(message) {
+  const randomFacts = [
+    "Cats say meow",
+    "Dogs go bark",
+    "Foxes go ring-ding-ding",
+  ];
+  message.channel.send(
+    randomFacts[Math.floor(Math.random() * randomFacts.length)]
+  );
 }
 
 function help(message) {
