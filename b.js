@@ -309,7 +309,8 @@ function help(message) {
       "**!gtfo** to make bananabot pack his little fucking backpack and leave the voice channel :)\n" +
       "**!hi** to say hello to bananabot. It's alright to be nice sometimes.\n" +
       "**!rate me baddy** to get bananabot to rate you. As you are. In his bananabot eyes.\n" +
-      "**!fuckyou** to tell bananabot off. To stand up for yourself and let him have it!"
+      "**!random** to ask bananabot to give you some random fact. He's crazy tho so don't take it too seriously\n" +
+      "**!fuckyou** to tell bananabot off! To stand up for yourself and let him have it!"
   );
   return;
 }
