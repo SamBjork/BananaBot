@@ -20,7 +20,7 @@ jobs:
       with:
         host: ${{ secrets.IP_ADRESS }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.PASSWORD }}
+        key: ${{ secrets.KEY }}
         port: 22
         script: |
           cd ~/../repos/BananaBot/
