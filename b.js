@@ -285,6 +285,7 @@ function stop(message, serverQueue) {
 }
 
 function leave(message, serverQueue) {
+  message.channel.send("Sheesh.. Okay, I'll leave then..");
   serverQueue.voiceChannel.leave();
   queue.delete(message.guild.id);
   return;
