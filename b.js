@@ -49,7 +49,7 @@ client.on("message", async (message) => {
     help(message);
     return;
   } else if (message.content.startsWith(`${prefix}random`)) {
-    help(message);
+    random(message);
     return;
   } else if (message.content.startsWith(`${prefix}fuckyou`)) {
     fuckyou(message);
