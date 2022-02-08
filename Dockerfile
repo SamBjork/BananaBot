@@ -6,6 +6,8 @@ WORKDIR /usr/src/bot
 
 COPY package.json /usr/src/bot
 RUN npm install
+RUN npm install node
+RUN npm install node-opus
 
 COPY . /usr/src/bot
 
