@@ -382,9 +382,7 @@ function stop(message, serverQueue) {
     return message.channel.send("There is no song that I could stop!");
 
   serverQueue.songs = [];
-  setTimeout(function () {
-    serverQueue.connection.dispatcher.end();
-  }, 10000000);
+  serverQueue.connection.dispatcher.end();
 }
 
 function leave(message, serverQueue) {
