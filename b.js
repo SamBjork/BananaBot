@@ -33,6 +33,12 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}hi`)) {
     hello(message);
     return;
+  } else if (message.content.startsWith(`${prefix}pause`)) {
+    pause(message, serverQueue);
+    return;
+  } else if (message.content.startsWith(`${prefix}resume`)) {
+    resume(message, serverQueue);
+    return;
   } else if (message.content.startsWith(`${prefix}rate me baddy`)) {
     rate(message);
     return;
@@ -233,6 +239,16 @@ async function rick(message, serverQueue) {
   }
 }
 
+function pause(message, serverQueue) {
+  message.channel.send("Pausing the music, dear banana buyer. <3");
+  serverQueue.connection.dispatcher.pause();
+}
+
+function resume(message, serverQueue) {
+  message.channel.send("Resuming the music, dear banana buyer. <3");
+  serverQueue.connection.dispatcher.resume();
+}
+
 function fuckyou(message) {
   switch ((number = Math.floor(Math.random() * 1))) {
     case 0:
@@ -382,6 +398,7 @@ function stop(message, serverQueue) {
     return message.channel.send("There is no song that I could stop!");
 
   serverQueue.songs = [];
+  message.channel.send("The song is stopped! CD style!");
   serverQueue.connection.dispatcher.end();
 }
 
@@ -406,7 +423,9 @@ function random(message) {
 function help(message) {
   message.channel.send(
     "**!play** to poke a stick at bananbot and make him play a song. Either enter a search term or a URL\n" +
-      "**!skip** to slap his little banana face and make him skip a song\n" +
+      "**!skip** to slap his little banana face and make him skip the current song\n" +
+      "**!pause** to put your hand on his banana mouth and make him pause the current song\n" +
+      "**!resume** to remove your hand from his banana mouth and make him resume the current song\n" +
       "**!stop** to put a gag in his little banana mouth to make him stop the music (essentially killing the vibe)\n" +
       "**!gtfo** to make bananabot pack his little fucking backpack and leave the voice channel :)\n" +
       "**!hi** to say hello to bananabot. It's alright to be nice sometimes.\n" +
