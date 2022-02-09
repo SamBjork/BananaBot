@@ -382,7 +382,9 @@ function skip(message, serverQueue) {
     );
   if (!serverQueue)
     return message.channel.send("There is no song that I could skip!");
-
+  message.channel.send(
+    "The song is skipped! (Not necessarily because it was bad!)"
+  );
   serverQueue.connection.dispatcher.end();
 }
 
