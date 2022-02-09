@@ -54,6 +54,9 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}fuckyou`)) {
     fuckyou(message);
     return;
+  } else if (message.content.startsWith(`${prefix}banana`)) {
+    banana(message);
+    return;
   } else {
     message.channel.send("You need to enter a valid command!");
   }
@@ -132,6 +135,22 @@ async function execute(message, serverQueue) {
   } else {
     serverQueue.songs.push(song);
     return message.channel.send(`${song.title} has been added to the queue!`);
+  }
+}
+
+function banana(message) {
+  song = {
+    title: "Naturbarn",
+    url: "https://www.youtube.com/watch?v=uirUgpqXRg4",
+  };
+  try {
+    var connection = await voiceChannel.join();
+    queueContruct.connection = connection;
+    play(message.guild, song);
+  } catch (err) {
+    console.log(err);
+    queue.delete(message.guild.id);
+    return message.channel.send(err);
   }
 }
 
@@ -311,7 +330,8 @@ function help(message) {
       "**!hi** to say hello to bananabot. It's alright to be nice sometimes.\n" +
       "**!rate me baddy** to get bananabot to rate you. As you are. In his bananabot eyes.\n" +
       "**!random** to ask bananabot to give you some random fact. He's crazy tho so don't take it too seriously\n" +
-      "**!fuckyou** to tell bananabot off! To stand up for yourself and let him have it!"
+      "**!fuckyou** to tell bananabot off! To stand up for yourself and let him have it!\n" +
+      "**!banana** to let bananabot show you the origins from where he came"
   );
   return;
 }
