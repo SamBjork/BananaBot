@@ -55,7 +55,7 @@ client.on("message", async (message) => {
     fuckyou(message);
     return;
   } else if (message.content.startsWith(`${prefix}banana`)) {
-    banana(message);
+    banana(message, serverQueue);
     return;
   } else {
     message.channel.send("You need to enter a valid command!");
@@ -138,19 +138,48 @@ async function execute(message, serverQueue) {
   }
 }
 
-async function banana(message) {
+async function banana(message, serverQueue) {
+  const voiceChannel = message.member.voice.channel;
+  if (!voiceChannel)
+    return message.channel.send(
+      "You need to be in a voice channel to play music!"
+    );
+  const permissions = voiceChannel.permissionsFor(message.client.user);
+  if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+    return message.channel.send(
+      "I need the permissions to join and speak in your voice channel!"
+    );
+  }
   song = {
     title: "Naturbarn",
     url: "https://www.youtube.com/watch?v=uirUgpqXRg4",
   };
-  try {
-    var connection = await voiceChannel.join();
-    queueContruct.connection = connection;
-    play(message.guild, song);
-  } catch (err) {
-    console.log(err);
-    queue.delete(message.guild.id);
-    return message.channel.send(err);
+  if (!serverQueue) {
+    const queueContruct = {
+      textChannel: message.channel,
+      voiceChannel: voiceChannel,
+      connection: null,
+      songs: [],
+      volume: 5,
+      playing: true,
+    };
+
+    queue.set(message.guild.id, queueContruct);
+
+    queueContruct.songs.push(song);
+
+    try {
+      var connection = await voiceChannel.join();
+      queueContruct.connection = connection;
+      play(message.guild, song);
+    } catch (err) {
+      console.log(err);
+      queue.delete(message.guild.id);
+      return message.channel.send(err);
+    }
+  } else {
+    serverQueue.songs.push(song);
+    return message.channel.send(`${song.title} has been added to the queue!`);
   }
 }
 
@@ -345,7 +374,7 @@ function play(guild, song) {
     queue.delete(guild.id);
     return;
   }
-
+  console.log(serverQueue);
   const dispatcher = serverQueue.connection
     .play(ytdl(song.url))
     .on("finish", () => {
