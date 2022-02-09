@@ -138,7 +138,7 @@ async function execute(message, serverQueue) {
   }
 }
 
-function banana(message) {
+async function banana(message) {
   song = {
     title: "Naturbarn",
     url: "https://www.youtube.com/watch?v=uirUgpqXRg4",
