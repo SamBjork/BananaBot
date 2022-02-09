@@ -366,7 +366,10 @@ function skip(message, serverQueue) {
     );
   if (!serverQueue)
     return message.channel.send("There is no song that I could skip!");
-  serverQueue.connection.dispatcher.end();
+
+  setTimeout(function () {
+    serverQueue.connection.dispatcher.end();
+  }, 10000000);
 }
 
 function stop(message, serverQueue) {
@@ -379,7 +382,9 @@ function stop(message, serverQueue) {
     return message.channel.send("There is no song that I could stop!");
 
   serverQueue.songs = [];
-  serverQueue.connection.dispatcher.end();
+  setTimeout(function () {
+    serverQueue.connection.dispatcher.end();
+  }, 10000000);
 }
 
 function leave(message, serverQueue) {
