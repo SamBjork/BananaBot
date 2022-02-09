@@ -383,9 +383,7 @@ function skip(message, serverQueue) {
   if (!serverQueue)
     return message.channel.send("There is no song that I could skip!");
 
-  setTimeout(function () {
-    serverQueue.connection.dispatcher.end();
-  }, 10000000);
+  serverQueue.connection.dispatcher.end();
 }
 
 function stop(message, serverQueue) {
