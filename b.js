@@ -51,6 +51,9 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}gtfo`)) {
     leave(message, serverQueue);
     return;
+  } else if (message.content.startsWith(`${prefix}queue`)) {
+    showQueue(message, serverQueue);
+    return;
   } else if (message.content.startsWith(`${prefix}help`)) {
     help(message);
     return;
@@ -59,6 +62,9 @@ client.on("message", async (message) => {
     return;
   } else if (message.content.startsWith(`${prefix}fuckyou`)) {
     fuckyou(message);
+    return;
+  } else if (message.content.startsWith(`${prefix}sorry`)) {
+    sorry(message);
     return;
   } else if (message.content.startsWith(`${prefix}banana`)) {
     banana(message, serverQueue);
@@ -69,6 +75,24 @@ client.on("message", async (message) => {
   } else {
     message.channel.send("You need to enter a valid command!");
   }
+});
+
+client.on("voiceStateUpdate", (oldState, newState) => {
+  // if nobody left the channel in question, return.
+  if (
+    oldState.channelID !== oldState.guild.me.voice.channelID ||
+    newState.channel
+  )
+    return;
+
+  // otherwise, check how many people are in the channel now
+  if (!oldState.channel.members.size - 1)
+    setTimeout(() => {
+      // if 1 (you), wait five minutes
+      if (!oldState.channel.members.size - 1)
+        // if there's still 1 member,
+        oldState.channel.leave(); // leave
+    }, 300000); // (5 min in ms)
 });
 
 async function execute(message, serverQueue) {
@@ -249,6 +273,12 @@ function resume(message, serverQueue) {
   serverQueue.connection.dispatcher.resume();
 }
 
+function sorry(message) {
+  message.channel.send(
+    "It's okay. Sometimes we all just need to blow off some steam. I know how it is."
+  );
+}
+
 function fuckyou(message) {
   switch ((number = Math.floor(Math.random() * 1))) {
     case 0:
@@ -402,6 +432,19 @@ function stop(message, serverQueue) {
   serverQueue.connection.dispatcher.end();
 }
 
+function showQueue(message, serverQueue) {
+  if (!serverQueue) {
+    message.channel.send("There is nothing in the queue!");
+    return;
+  }
+  message.channel.send("**Queue:**");
+  for (let i = 1; i < serverQueue.songs.length; i++) {
+    const song = serverQueue.songs[i];
+    console.log(i + ": " + song.title);
+    message.channel.send(i + ": " + song.title);
+  }
+}
+
 function leave(message, serverQueue) {
   message.channel.send("Sheesh.. Okay, I'll leave then..");
   serverQueue.voiceChannel.leave();
@@ -426,12 +469,14 @@ function help(message) {
       "**!skip** to slap his little banana face and make him skip the current song\n" +
       "**!pause** to put your hand on his banana mouth and make him pause the current song\n" +
       "**!resume** to remove your hand from his banana mouth and make him resume the current song\n" +
-      "**!stop** to put a gag in his little banana mouth to make him stop the music (essentially killing the vibe)\n" +
+      "**!stop** to put a gag in his banana mouth to make him stop the music (essentially killing the vibe)\n" +
+      "**!queue** to peel of a bit of his banana skin and see what's coming up in the queue\n" +
       "**!gtfo** to make bananabot pack his little fucking backpack and leave the voice channel :)\n" +
       "**!hi** to say hello to bananabot. It's alright to be nice sometimes.\n" +
       "**!rate me baddy** to get bananabot to rate you. As you are. In his bananabot eyes.\n" +
       "**!random** to ask bananabot to give you some random fact. He's crazy tho so don't take it too seriously\n" +
       "**!fuckyou** to tell bananabot off! To stand up for yourself and let him have it!\n" +
+      "**!sorry** to ask bananabot for forgiveness. To show love and compassion is always a plus!\n" +
       "**!banana** to let bananabot show you the origins from where he came and where it all began..."
   );
   return;
@@ -446,7 +491,6 @@ function play(guild, song) {
     queue.delete(guild.id);
     return;
   }
-  console.log(serverQueue);
   const dispatcher = serverQueue.connection
     .play(ytdl(song.url))
     .on("finish", () => {
