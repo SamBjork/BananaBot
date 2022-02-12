@@ -166,8 +166,9 @@ async function execute(message, serverQueue) {
       return message.channel.send(err);
     }
   } else {
-    serverQueue.songs.push(song);
-    return message.channel.send(`${song.title} has been added to the queue!`);
+    await serverQueue.songs.push(song);
+    await message.channel.send(`${song.title} has been added to the queue!`);
+    return;
   }
 }
 
@@ -261,16 +262,6 @@ async function rick(message, serverQueue) {
     serverQueue.songs.push(song);
     return message.channel.send(`${song.title} has been added to the queue!`);
   }
-}
-
-function pause(message, serverQueue) {
-  message.channel.send("Pausing the music, dear banana buyer. <3");
-  serverQueue.connection.dispatcher.pause();
-}
-
-function resume(message, serverQueue) {
-  message.channel.send("Resuming the music, dear banana buyer. <3");
-  serverQueue.connection.dispatcher.resume();
 }
 
 function sorry(message) {
@@ -443,6 +434,16 @@ function showQueue(message, serverQueue) {
     console.log(i + ": " + song.title);
     message.channel.send(i + ": " + song.title);
   }
+}
+
+function pause(message, serverQueue) {
+  message.channel.send("Pausing the music, dear banana buyer. <3");
+  serverQueue.connection.dispatcher.pause();
+}
+
+function resume(message, serverQueue) {
+  message.channel.send("Resuming the music, dear banana buyer. <3");
+  serverQueue.connection.dispatcher.resume();
 }
 
 function leave(message, serverQueue) {
