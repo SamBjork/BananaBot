@@ -26,4 +26,4 @@ jobs:
           cd ~/../repos/BananaBot/
           git pull origin main
           git status
-          docker-compose up -d --build --force-recreate
+          docker-compose up -d --build
