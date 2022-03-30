@@ -60,6 +60,9 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}random`)) {
     random(message);
     return;
+  } else if (message.content.startsWith(`${prefix}indy`)) {
+    random(message);
+    return;
   } else if (message.content.startsWith(`${prefix}fuckyou`)) {
     fuckyou(message);
     return;
@@ -234,6 +237,52 @@ async function rick(message, serverQueue) {
   song = {
     title: "!RICK ROLL! :D",
     url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  };
+  if (!serverQueue) {
+    const queueContruct = {
+      textChannel: message.channel,
+      voiceChannel: voiceChannel,
+      connection: null,
+      songs: [],
+      volume: 17,
+      playing: true,
+    };
+
+    queue.set(message.guild.id, queueContruct);
+
+    queueContruct.songs.push(song);
+
+    try {
+      var connection = await voiceChannel.join();
+      queueContruct.connection = connection;
+      play(message.guild, song);
+    } catch (err) {
+      console.log(err);
+      queue.delete(message.guild.id);
+      return message.channel.send(err);
+    }
+  } else {
+    serverQueue.songs.push(song);
+    return message.channel.send(`${song.title} has been added to the queue!`);
+  }
+}
+
+async function indy(message, serverQueue) {
+  message.channel.send("*Great choice you made, young padawan.*");
+  const voiceChannel = message.member.voice.channel;
+  if (!voiceChannel)
+    return message.channel.send(
+      "You need to be in a voice channel to play music!"
+    );
+  const permissions = voiceChannel.permissionsFor(message.client.user);
+  if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+    return message.channel.send(
+      "I need the permissions to join and speak in your voice channel!"
+    );
+  }
+  song = {
+    title: "Indiana Jones 1 hour <3",
+    url: "https://www.youtube.com/watch?v=_h-s0CQTvBg",
   };
   if (!serverQueue) {
     const queueContruct = {
@@ -447,6 +496,10 @@ function resume(message, serverQueue) {
 }
 
 function leave(message, serverQueue) {
+  if (!serverQueue) {
+    message.channel.send("Hey! I'm not even in there, dude!");
+    return;
+  }
   message.channel.send("Sheesh.. Okay, I'll leave then..");
   serverQueue.voiceChannel.leave();
   queue.delete(message.guild.id);
@@ -478,6 +531,7 @@ function help(message) {
       "**!random** to ask bananabot to give you some random fact. He's crazy tho so don't take it too seriously\n" +
       "**!fuckyou** to tell bananabot off! To stand up for yourself and let him have it!\n" +
       "**!sorry** to ask bananabot for forgiveness. To show love and compassion is always a plus!\n" +
+      "**!indy** Get some of that sweet sweet india jones theme.\n" +
       "**!banana** to let bananabot show you the origins from where he came and where it all began..."
   );
   return;
