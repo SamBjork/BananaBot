@@ -4,7 +4,8 @@
   "description": "",
   "main": "b.js",
   "dependencies": {
-    "discord.js": "^12.5.3",
+    "discord": "^0.8.2",
+    "discord.js": "^13.7.0",
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^4.4.1",
     "fluent-ffmpeg": "^2.1.2",
