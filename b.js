@@ -61,7 +61,7 @@ client.on("message", async (message) => {
     random(message);
     return;
   } else if (message.content.startsWith(`${prefix}indy`)) {
-    random(message);
+    indy(message, serverQueue);
     return;
   } else if (message.content.startsWith(`${prefix}fuckyou`)) {
     fuckyou(message);
