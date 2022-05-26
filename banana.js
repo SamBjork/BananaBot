@@ -1,9 +1,24 @@
-const Discord = require("discord.js");
 const { prefix, token } = require("./config.json");
 const ytdl = require("ytdl-core");
 const yts = require("yt-search");
 
-const client = new Discord.Client();
+const { createReadStream } = require('node:fs');
+const { join } = require('node:path');
+const { } = require('@discordjs/voice');
+
+const { Client, Intents } = require("discord.js");
+
+const player = createAudioPlayer();
+
+const client = new Client({
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_VOICE_STATES,
+  ],
+});
+const { joinVoiceChannel,createAudioResource, StreamType  } = require("@discordjs/voice");
+
 const queue = new Map();
 
 client.once("ready", () => {
@@ -21,7 +36,7 @@ client.once("disconnect", () => {
   console.log("Disconnect!");
 });
 
-client.on("message", async (message) => {
+client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
 
@@ -116,8 +131,8 @@ async function execute(message, serverQueue) {
   let song;
   if (ytdl.validateURL(args[1])) {
     const { videos } = await yts(args.slice(1).join(" "));
-    console.log("Trying 1");
-    console.log(videos);
+    console.log("Trying 1st song alternative ");
+
     if (!videos.length) {
       message.channel.send("No song or video found! Double check the URL!");
     }
@@ -125,11 +140,9 @@ async function execute(message, serverQueue) {
       title: videos[0].title,
       url: videos[0].url,
     };
-    console.log(videos[0].title, videos[0].url);
-    console.log(videos[0]);
   } else {
     const { videos } = await yts(args.slice(1).join(" "));
-    console.log("Trying 2");
+    console.log("Trying 2nd song alternative ");
 
     if (!videos.length) {
       message.channel.send("No song or video found from search!");
@@ -141,8 +154,6 @@ async function execute(message, serverQueue) {
       title: videos[0].title,
       url: videos[0].url,
     };
-    console.log(videos[0].title, videos[0].url);
-    console.log(videos[0]);
   }
 
   if (!serverQueue) {
@@ -160,9 +171,12 @@ async function execute(message, serverQueue) {
     queueContruct.songs.push(song);
 
     try {
-      var connection = await voiceChannel.join();
-      queueContruct.connection = connection;
-      play(message.guild, queueContruct.songs[0]);
+      queueContruct.connection = joinVoiceChannel({
+        channelId: message.channelID,
+        guildId: message.guild.id,
+        adapterCreator: message.guild.voiceAdapterCreator,
+      });
+      play(message.guild, queueContruct.songs[0], queueContruct.connection);
     } catch (err) {
       console.log(err);
       queue.delete(message.guild.id);
@@ -537,8 +551,9 @@ function help(message) {
   return;
 }
 
-function play(guild, song) {
+function play(guild, song, connection) {
   const serverQueue = queue.get(guild.id);
+  console.log(serverQueue);
   if (!song) {
     setTimeout(function () {
       serverQueue.voiceChannel.leave();
@@ -546,6 +561,9 @@ function play(guild, song) {
     queue.delete(guild.id);
     return;
   }
+  connection.subscribe(player);
+
+  player.play(resource);
   const dispatcher = serverQueue.connection
     .play(ytdl(song.url))
     .on("finish", () => {
