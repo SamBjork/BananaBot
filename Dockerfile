@@ -24,4 +24,4 @@ COPY --from=BUILD /usr/lib/ /usr/lib/
 COPY --from=BUILD /lib/ /lib/
 COPY --from=BUILD /build/ /bot
 ENV NODE_ENV production
-CMD ["node", "./index.js"]
+CMD ["node", " index.js"]

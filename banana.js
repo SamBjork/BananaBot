@@ -1,19 +1,19 @@
-const { prefix, token } = require("./config.json");
+const { prefix, token } = require("./config.js");
 const ytdl = require("ytdl-core");
 const yts = require("yt-search");
 
 const { createReadStream } = require('node:fs');
 const { join } = require('node:path');
-const { } = require('@discordjs/voice');
-
-const { Client, Intents } = require("discord.js");
+const { createAudioPlayer } = require('@discordjs/voice');
 
 const player = createAudioPlayer();
+const { Client, Intents } = require('discord.js');
 
 const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.MESSAGE_CONTENT,
     Intents.FLAGS.GUILD_VOICE_STATES,
   ],
 });
@@ -281,23 +281,97 @@ async function rick(message, serverQueue) {
   }
 }
 
-async function indy(message, serverQueue) {
-  message.channel.send("*Great choice you made, young padawan.*");
+// async function indy(message, serverQueue) {
+//   message.channel.send("*Great choice you made, young padawan.*");
+//   const voiceChannel = message.member.voice.channel;
+//   if (!voiceChannel)
+//     return message.channel.send(
+//       "You need to be in a voice channel to play music!"
+//     );
+//   const permissions = voiceChannel.permissionsFor(message.client.user);
+//   if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+//     return message.channel.send(
+//       "I need the permissions to join and speak in your voice channel!"
+//     );
+//   }
+//   song = {
+//     title: "Indiana Jones 1 hour <3",
+//     url: "https://www.youtube.com/watch?v=_h-s0CQTvBg",
+//   };
+//   if (!serverQueue) {
+//     const queueContruct = {
+//       textChannel: message.channel,
+//       voiceChannel: voiceChannel,
+//       connection: null,
+//       songs: [],
+//       volume: 17,
+//       playing: true,
+//     };
+
+//     queue.set(message.guild.id, queueContruct);
+
+//     queueContruct.songs.push(song);
+
+//     try {
+//       var connection = await voiceChannel.join();
+//       queueContruct.connection = connection;
+//       play(message.guild, song);
+//     } catch (err) {
+//       console.log(err);
+//       queue.delete(message.guild.id);
+//       return message.channel.send(err);
+//     }
+//   } else {
+//     serverQueue.songs.push(song);
+//     return message.channel.send(`${song.title} has been added to the queue!`);
+//   }
+// }
+
+// function sorry(message) {
+//   message.channel.send(
+//     "It's okay. Sometimes we all just need to blow off some steam. I know how it is."
+//   );
+// }
+
+// function fuckyou(message) {
+//   switch ((number = Math.floor(Math.random() * 1))) {
+//     case 0:
+//       number = 0;
+//       message.channel.send(
+//         "Alright. Alright.. Jeez sorry. I was just doing my banana duty."
+//       );
+//       break;
+//     case 1:
+//       number = 1;
+//       message.channel.send(
+//         "** HEY! No talk like that here in our banana land! But I Understand Your Feelings!**"
+//       );
+//       break;
+//   }
+// }
+
+async function indy(message) {
+  message.channel.send('*Great choice you made, young padawan.*');
   const voiceChannel = message.member.voice.channel;
-  if (!voiceChannel)
-    return message.channel.send(
-      "You need to be in a voice channel to play music!"
-    );
+
+  if (!voiceChannel) {
+    return message.channel.send('You need to be in a voice channel to play music!');
+  }
+
   const permissions = voiceChannel.permissionsFor(message.client.user);
-  if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+  if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
     return message.channel.send(
-      "I need the permissions to join and speak in your voice channel!"
+      'I need the permissions to join and speak in your voice channel!'
     );
   }
-  song = {
-    title: "Indiana Jones 1 hour <3",
-    url: "https://www.youtube.com/watch?v=_h-s0CQTvBg",
+
+  const song = {
+    title: 'Indiana Jones 1 hour <3',
+    url: 'https://www.youtube.com/watch?v=_h-s0CQTvBg',
   };
+
+  const serverQueue = queue.get(message.guild.id);
+
   if (!serverQueue) {
     const queueContruct = {
       textChannel: message.channel,
@@ -313,13 +387,13 @@ async function indy(message, serverQueue) {
     queueContruct.songs.push(song);
 
     try {
-      var connection = await voiceChannel.join();
+      const connection = await voiceChannel.join();
       queueContruct.connection = connection;
       play(message.guild, song);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       queue.delete(message.guild.id);
-      return message.channel.send(err);
+      return message.channel.send(`Error: ${err.message}`);
     }
   } else {
     serverQueue.songs.push(song);
@@ -327,28 +401,6 @@ async function indy(message, serverQueue) {
   }
 }
 
-function sorry(message) {
-  message.channel.send(
-    "It's okay. Sometimes we all just need to blow off some steam. I know how it is."
-  );
-}
-
-function fuckyou(message) {
-  switch ((number = Math.floor(Math.random() * 1))) {
-    case 0:
-      number = 0;
-      message.channel.send(
-        "Alright. Alright.. Jeez sorry. I was just doing my banana duty."
-      );
-      break;
-    case 1:
-      number = 1;
-      message.channel.send(
-        "** HEY! No talk like that here in our banana land! But I Understand Your Feelings!**"
-      );
-      break;
-  }
-}
 
 function hello(message) {
   switch ((number = Math.floor(Math.random() * 4))) {
@@ -385,7 +437,7 @@ function hello(message) {
 
 function rate(message) {
   message.channel.send("Alright, I'll rate you on a scale of 1-10");
-  switch ((number = Math.floor(Math.random() * 10))) {
+  switch ((number = Math.floor(Math.random() * 11))) {
     case 0:
       number = 0;
       message.channel.send(
